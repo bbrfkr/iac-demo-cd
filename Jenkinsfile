@@ -73,7 +73,7 @@ node {
             -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
             playbooks/deploy-test-environment.yaml
         """
-        sh 'echo $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color'
+        sh "echo $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color"
       }
     } catch (Exception e) {
       stage("recover test environment") {
