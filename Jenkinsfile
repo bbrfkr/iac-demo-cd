@@ -45,9 +45,10 @@ node {
       assert 0 == unit_test_result
     }
 
-    def test_deploy_color = sh(script: 'cat /var/jenkins_home/for_cd/test_deploy_color', returnStdout: true)
-    if (test_deploy_color == "") { test_deploy_color = "blue" }
     stage("configure test environment") {
+      get_test_color_cmd = 'cat /var/jenkins_home/for_cd/test_deploy_color || exit 0'
+      def test_deploy_color = sh(script: get_test_color_cmd, returnStdout: true)
+      if (test_deploy_color == "") { test_deploy_color = "blue" }
       sh """
         cd iac-demo-cd && \
         ansible-playbook \
