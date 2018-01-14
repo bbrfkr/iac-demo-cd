@@ -2,6 +2,8 @@
 - name: deploy test environment
   hosts: "{{ target }}"
   gather_facts: no
+  vars_files:
+  - vars/vars.yaml
   tasks:
   - name: get record sets
     route53_facts:
