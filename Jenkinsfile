@@ -12,7 +12,7 @@ node {
       sh """
         cd iac-demo-cd && \
         ansible-playbook \
-          -i ec2.py 
+          -i ec2.py \
           -e 'target=tag_Name_bbrfkr_instance_iac_test' \
           --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem
           playbooks/configure-service.yaml'
