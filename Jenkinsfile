@@ -29,7 +29,7 @@ node {
         sh 'cd iac-demo-cd && ansible-playbook -i hosts playbooks/terminate-all-instances.yaml'
       }
     }
-    state("check result of unit test") {
+    stage("check result of unit test") {
       assert 0 == unit_test_result
     }
   }
