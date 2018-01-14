@@ -1,8 +1,0 @@
----
-- hosts: localhost
-  connection: local
-  tasks:
-  - shell: hostname
-    register: reg_hostname
-  - debug:
-      msg: "{{ reg_hostname.stdout }}"
