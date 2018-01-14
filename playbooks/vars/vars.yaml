@@ -6,6 +6,7 @@ aws_instances:
 - tags:
     Name: bbrfkr-instance-iac-test
     Env: iac
+    Color: red
   instance_type: t2.micro
   security_group: bbrfkr-sg-web
   state: present
