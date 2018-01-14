@@ -1,0 +1,13 @@
+---
+- name: configure service
+  hosts: "{{ target }}"
+  tasks:
+  - name: install httpd
+    yum:
+      name: httpd
+      state: installed
+  - name: put index.html
+    copy:
+      src: index.html
+      dest: /var/www/html
+
