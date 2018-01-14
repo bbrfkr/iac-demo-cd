@@ -59,13 +59,8 @@ node {
       """
     }
     stage("deploy test environment") {
-      sh """
-        cd iac-demo-cd && \
-        ansible-playbook \
-          -i ec2.py \
-          -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
-          playbooks/deploy-test-environment.yaml
-      """
+      sh 'echo test'
     }
   }
 }
+
