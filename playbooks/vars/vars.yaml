@@ -13,4 +13,4 @@ aws_instances:
   state: present
   vpc_subnet: bbrfkr-subnet-iac
   az: ap-northeast-1c
-  assign_public_ip: no
+  assign_public_ip: yes
