@@ -21,6 +21,13 @@ node {
             --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
             playbooks/configure-service.yaml
         """
+        sh """
+          cd iac-demo-cd && \
+          ansible-playbook \
+            -i ec2.py \
+            -e 'target=tag_Name_bbrfkr_instance_iac_test' \
+            playbooks/unit-test.yaml
+        """
       }
     } catch (Exception e) {
       unit_test_result = 1
