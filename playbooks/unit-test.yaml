@@ -2,9 +2,11 @@
 - name: unit test
   hosts: "{{ target }}"
   gather_facts: no
+  vars_files:
+  - vars/vars.yaml
   tasks:
   - name: get content by curl
-    shell: curl http://{{ ansible_host }}
+    shell: curl http://{{ ec2_ip_address }}
     changed_when: false
     delegate_to: localhost
     register: reg_curl_test
