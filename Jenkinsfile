@@ -45,27 +45,47 @@ node {
       assert 0 == unit_test_result
     }
 
-    get_test_color_cmd = 'cat /var/jenkins_home/for_cd/test_deploy_color || exit 0'
-    def test_deploy_color = sh(script: get_test_color_cmd, returnStdout: true)
-    if (test_deploy_color == "") { test_deploy_color = "blue" }
-    stage("configure test environment") {
-      sh """
-        cd iac-demo-cd && \
-        ansible-playbook \
-          -i ec2.py \
-          -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
-          --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
-          playbooks/configure-service.yaml
-      """
+    get_color_cmd = 'cat /var/jenkins_home/for_cd/test_deploy_color || exit 0'
+    def tmp = sh(script: get_color_cmd, returnStdout: true)
+    def test_deploy_color = "blue"
+    def test_origin_color = "green"
+    if (tmp == "green") {
+      test_deploy_color = "green"
+      test_origin_color = "blue"
     }
-    stage("deploy test environment") {
-      sh """
-        cd iac-demo-cd && \
-        ansible-playbook \
-          -i ec2.py \
-          -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
-          playbooks/deploy-test-environment.yaml
-      """
+
+    try {
+      stage("configure test environment") {
+        sh """
+          cd iac-demo-cd && \
+          ansible-playbook \
+            -i ec2.py \
+            -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
+            --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
+            playbooks/configure-service.yaml
+        """
+      }
+      stage("deploy test environment") {
+        sh """
+          cd iac-demo-cd && \
+          ansible-playbook \
+            -i ec2.py \
+            -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
+            playbooks/deploy-test-environment.yaml
+        """
+        sh 'echo $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color'
+      }
+    } catch (Exception e) {
+      stage("recover test environment") {
+        sh """
+          cd iac-demo-cd && \
+          ansible-playbook \
+            -i ec2.py \
+            -e 'target=tag_Name_bbrfkr_instance_test_$test_origin_color' \
+            playbooks/deploy-test-environment.yaml
+        """
+      }
+    } finally {
     }
   }
 }
