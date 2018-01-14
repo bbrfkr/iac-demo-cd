@@ -1,5 +1,5 @@
 node {
-  docker.image('bbrfkr0129/build_test:with_boto').inside("-v /var/jenkins_home/for_cd") {
+  docker.image('bbrfkr0129/build_test:with_boto').inside("-v /var/jenkins_home/for_cd:/var/jenkins_home/for_cd") {
     stage("clone git repo") {
       sh 'rm -rf iac-demo-cd && git clone https://github.com/bbrfkr/iac-demo-cd'
     }
