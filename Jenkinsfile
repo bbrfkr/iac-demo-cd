@@ -42,6 +42,7 @@ node {
       } else {
         print "unit test is failed"
       }
+      assert 0 == unit_test_result
     }
   }
 }
