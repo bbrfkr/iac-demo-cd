@@ -28,5 +28,5 @@
         region: "{{ aws_region }}"
         device_id: "{{ reg_test_instance.instances.0.instance_id }}"
         public_ip: "{{ test_ip }}"
-      when: reg_iac_jenkins.instances != []
+      when: reg_test_instance.instances != []
     delegate_to: localhost
