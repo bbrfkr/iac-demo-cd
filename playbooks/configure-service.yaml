@@ -2,6 +2,8 @@
 - name: configure service
   hosts: "{{ target }}"
   remote_user: ec2-user
+  vars_files:
+  - vars/vars.yaml
   tasks:
   - name: install httpd
     yum:
