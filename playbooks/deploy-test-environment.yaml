@@ -1,0 +1,15 @@
+---
+- name: deploy test environment
+  hosts: "{{ target }}"
+  gather_facts: no
+  tasks:
+  - name: manage route53 record for test environment
+    route53:
+      state: present
+      zone: bbrfkr.tk
+      record: test.bbrfkr.tk
+      type: A
+      ttl: 7200
+      value: "{{ ec2_ip_address }}"
+      wait: yes
+    delegate_to: localhost
