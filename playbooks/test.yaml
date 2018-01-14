@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  tasks:
+  - shell: hostname
+    register: reg_hostname
+  - debug:
+      msg: "{{ reg_hostname.stdout }}"
