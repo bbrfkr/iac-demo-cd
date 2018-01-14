@@ -44,5 +44,18 @@ node {
       }
       assert 0 == unit_test_result
     }
+
+    def test_deploy_color = sh(script: 'cat /var/jenkins_home/for_cd/test_deploy_color', returnStdout: true)
+    if (test_deploy_color == "") { test_deploy_color = "blue" }
+    stage("configure test environment") {
+      sh """
+        cd iac-demo-cd && \
+        ansible-playbook \
+          -i ec2.py \
+          -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
+          --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
+          playbooks/configure-service.yaml
+      """
+    }
   }
 }
