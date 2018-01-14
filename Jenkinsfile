@@ -2,6 +2,7 @@ node {
   def docker_image = 'bbrfkr0129/build_test:with_boto'
   def docker_opts = '-v /var/jenkins_home/for_cd:/var/jenkins_home/for_cd'
   def unit_test_result = 0
+  def deploy_version = "1.0"
   docker.image(docker_image).inside(docker_opts) {
     stage("clone git repo") {
       sh 'rm -rf iac-demo-cd && git clone https://github.com/bbrfkr/iac-demo-cd'
@@ -18,6 +19,7 @@ node {
           ansible-playbook \
             -i ec2.py \
             -e 'target=tag_Name_bbrfkr_instance_iac_test' \
+            -e 'version=$deploy_version' \
             --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
             playbooks/configure-service.yaml
         """
@@ -26,6 +28,7 @@ node {
           ansible-playbook \
             -i ec2.py \
             -e 'target=tag_Name_bbrfkr_instance_iac_test' \
+            -e 'version=$deploy_version' \
             playbooks/unit-test.yaml
         """
       }

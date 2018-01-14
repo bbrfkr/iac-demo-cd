@@ -5,10 +5,11 @@
   tasks:
   - name: get content by curl
     shell: curl http://{{ ansible_host }}
+    changed_when: false
     delegate_to: localhost
     register: reg_curl_test
   - name: curl test
     assert:
       that:
-      - "'env: iac' in reg_curl_test.stdout"
+      - "'app version: {{ version }}' in reg_curl_test.stdout"
     delegate_to: localhost

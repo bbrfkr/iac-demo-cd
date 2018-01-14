@@ -9,9 +9,9 @@
       state: installed
     become: yes
   - name: put index.html
-    copy:
-      src: index.html
-      dest: /var/www/html
+    template:
+      src: index.html.j2
+      dest: /var/www/html/index.html
     become: yes
   - name: enable httpd
     service:
