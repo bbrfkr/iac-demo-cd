@@ -2,6 +2,7 @@ version: 1.0
 aws_region: ap-northeast-1
 aws_keypair: bbrfkr-keypair-for-aws
 aws_ami_id: ami-6be57d0d
+aws_hosted_zone_id: ZMT06JP8KAKS7
 aws_instances:
 - tags:
     Name: bbrfkr-instance-iac-test
@@ -12,4 +13,4 @@ aws_instances:
   state: present
   vpc_subnet: bbrfkr-subnet-iac
   az: ap-northeast-1c
-  assign_public_ip: yes
+  assign_public_ip: no

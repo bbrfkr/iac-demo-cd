@@ -2,6 +2,7 @@ node {
   def docker_image = 'bbrfkr0129/build_test:with_boto'
   def docker_opts = '-v /var/jenkins_home/for_cd:/var/jenkins_home/for_cd'
   def unit_test_result = 0
+  def integration_test_result = 0
   docker.image(docker_image).inside(docker_opts) {
     stage("clone git repo") {
       sh 'rm -rf iac-demo-cd && git clone https://github.com/bbrfkr/iac-demo-cd'
@@ -85,7 +86,15 @@ node {
             playbooks/deploy-test-environment.yaml
         """
       }
-    } finally {
+      integration_test_result = 1
+    }
+    stage ("check result of integration test") {
+      if (0 == integration_test_result) {
+        print "integration test is passed"
+      } else {
+        print "integration test is failed"
+      }
+      assert 0 == integration_test_result
     }
   }
 }
