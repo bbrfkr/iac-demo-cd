@@ -1,0 +1,37 @@
+---
+- name: terminate all instances
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+  - vars/vars.yaml
+  tasks:
+  - name: check existence of instances
+    ec2_instance_facts:
+      region: "{{ aws_region }}"
+      filters:
+        instance-state-name: running
+        "tag:Name": "{{ item.tags.Name }}"
+    register: reg_ec2_facts
+    with_items: "{{ aws_instances }}"
+  - name: terminate all managed instances
+    ec2:
+      region: "{{ aws_region }}"
+      image: "dummy"
+      count_tag:
+        Name: "{{ item.item.tags.Name }}"
+      exact_count: 0
+      wait: yes
+    register: reg_terminate_instances
+    async: 3600
+    poll: 0
+    when: item.instances | length != 0
+    with_items: "{{ reg_ec2_facts.results }}"
+  - name: wait for instances termination to complete
+    async_status:
+      jid: "{{ item.ansible_job_id }}"
+    register: ec2_jobs
+    until: ec2_jobs.finished
+    retries: 300
+    when: item.item.instances | length != 0
+    with_items: "{{ reg_terminate_instances.results }}"

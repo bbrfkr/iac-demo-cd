@@ -1,0 +1,12 @@
+---
+- name: wait for iac-test up
+  hosts: tag_Name_bbrfkr_instance_iac_test
+  gather_facts: false
+  tasks:
+  - name: wait for ssh port to be up
+    wait_for:
+      host: "{{ ansible_host | default(ansible_ssh_host) | default(inventory_hostname) }}"
+      port: 22
+      state: started
+    delegate_to: localhost
+
