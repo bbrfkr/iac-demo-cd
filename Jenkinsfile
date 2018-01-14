@@ -11,8 +11,8 @@ node {
     stage("exec unit test") {
       sh 'cd iac-demo-cd && ansible-playbook -i ec2.py -e "target=tag_Name_bbrfkr_instance_iac_test" playbooks/configure-service.yaml'
     }
-#    stage("delete instance for unit test") {
-#      sh 'cd iac-demo-cd && ansible-playbook -i hosts playbooks/terminate-all-instances.yaml'
-#    }
+    stage("delete instance for unit test") {
+      sh 'cd iac-demo-cd && ansible-playbook -i hosts playbooks/terminate-all-instances.yaml'
+    }
   }
 }
