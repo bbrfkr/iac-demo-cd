@@ -1,13 +1,16 @@
 ---
 - name: configure service
   hosts: "{{ target }}"
+  remote_user: ec2-user
   tasks:
   - name: install httpd
     yum:
       name: httpd
       state: installed
+    become: yes
   - name: put index.html
     copy:
       src: index.html
       dest: /var/www/html
+    become: yes
 
