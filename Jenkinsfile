@@ -30,7 +30,11 @@ node {
       }
     }
     stage("check result of unit test") {
-      assert 0 == unit_test_result
+      if (0 == unit_test_result) {
+        print "unit test is passed"
+      } else {
+        print "unit test is failed"
+      }
     }
   }
 }
