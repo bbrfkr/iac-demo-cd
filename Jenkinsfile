@@ -4,6 +4,6 @@ node {
         sh 'cd iac-demo-cd && ansible-playbook -i hosts playbooks/create-test-instance.yaml'
         sh 'cd iac-demo-cd && ./ec2.py --refresh-cache > /dev/null'
         sh 'cd iac-demo-cd && ansible-playbook -i ec2.py playbooks/wait-for-instances-up.yaml'
+        sh 'cd iac-demo-cd && ansible-playbook -i hosts playbooks/terminate-all-instances.yaml'
     }
-    sh 'ansible-playbook -i hosts playbook/terminate-all-instances.yaml'
 }
