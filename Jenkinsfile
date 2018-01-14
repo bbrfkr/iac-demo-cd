@@ -59,6 +59,7 @@ node {
       """
     }
     stage("deploy test environment") {
+      print 'dummy'
       sh """
         cd iac-demo-cd && \
         ansible-playbook \
