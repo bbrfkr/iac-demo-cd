@@ -64,7 +64,6 @@ node {
         ansible-playbook \
           -i ec2.py \
           -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
-          --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
           playbooks/deploy-test-environment.yaml
       """
     }
