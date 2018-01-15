@@ -108,6 +108,9 @@ node {
             -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
             playbooks/deploy-test-environment.yaml
         """
+
+        sleep(3000)
+
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -185,6 +188,9 @@ node {
             -e 'target=tag_Name_bbrfkr_instance_prod_$prod_deploy_color' \
             playbooks/deploy-prod-environment.yaml
         """
+
+        sleep(3000)
+
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
