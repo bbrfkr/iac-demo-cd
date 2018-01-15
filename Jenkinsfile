@@ -80,7 +80,6 @@ node {
             -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
             playbooks/deploy-test-environment.yaml
         """
-        sh "echo -n $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color"
       }
       stage("exec intagration test") {
         sh """
@@ -105,6 +104,7 @@ node {
     stage ("check result of integration test") {
       if (0 == integration_test_result) {
         print "integration test is passed"
+        sh "echo -n $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color"
       } else {
         print "integration test is failed"
       }
