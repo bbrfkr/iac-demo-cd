@@ -97,7 +97,7 @@ node {
           cd iac-demo-cd && \
           ansible-playbook \
             -i ec2.py \
-            -e 'target=tag_Name_bbrfkr_instance_test$test_deploy_color' \
+            -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
             playbooks/wait-for-instance-up.yaml
         """
       }
