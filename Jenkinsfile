@@ -109,7 +109,7 @@ node {
             playbooks/deploy-test-environment.yaml
         """
 
-        sleep(3)
+        sleep(10)
 
         sh """
           cd iac-demo-cd && \
@@ -189,7 +189,7 @@ node {
             playbooks/deploy-prod-environment.yaml
         """
 
-        sleep(3)
+        sleep(10)
 
         sh """
           cd iac-demo-cd && \
