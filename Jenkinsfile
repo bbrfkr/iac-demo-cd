@@ -6,6 +6,7 @@ node {
   def production_test_result = 0
   docker.image(docker_image).inside(docker_opts) {
     stage("clone git repo") {
+      print "debug"
       sh 'rm -rf iac-demo-cd && git clone https://github.com/bbrfkr/iac-demo-cd'
     }
     stage("create instance for unit test") {
