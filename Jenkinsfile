@@ -59,7 +59,7 @@ node {
     }
 
     try {
-      state("recreate specified color's instance of test environment ") {
+      stage("recreate specified color's instance of test environment ") {
 
       }
       stage("configure specified color's instance of test environment") {
@@ -82,7 +82,7 @@ node {
         """
         sh "echo -n $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color"
       }
-      state("exec intagration test") {
+      stage("exec intagration test") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
