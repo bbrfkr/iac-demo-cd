@@ -1,0 +1,16 @@
+---
+- name: integration test
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+  - vars/vars.yaml
+  tasks:
+  - name: get content by curl
+    shell: curl http://test.bbrfkr.tk
+    changed_when: false
+    register: reg_curl_test
+  - name: curl test
+    assert:
+      that:
+      - "'app version: {{ version }}' in reg_curl_test.stdout"

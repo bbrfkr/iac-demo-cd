@@ -13,7 +13,7 @@ node {
       sh 'cd iac-demo-cd && ansible-playbook -i ec2.py playbooks/wait-for-instances-up.yaml'
     }
     try {
-      stage("exec unit test") {
+      stage("configure instance for unit test") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -22,6 +22,8 @@ node {
             --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
             playbooks/configure-service.yaml
         """
+      }
+      stage("exec unit test") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -46,6 +48,7 @@ node {
       assert 0 == unit_test_result
     }
 
+    // get deploy color for test environment
     get_color_cmd = 'cat /var/jenkins_home/for_cd/test_deploy_color || exit 0'
     def tmp = sh(script: get_color_cmd, returnStdout: true)
     def test_deploy_color = "blue"
@@ -56,7 +59,10 @@ node {
     }
 
     try {
-      stage("configure test environment") {
+      state("recreate specified color's instance of test environment ") {
+
+      }
+      stage("configure specified color's instance of test environment") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -75,6 +81,14 @@ node {
             playbooks/deploy-test-environment.yaml
         """
         sh "echo -n $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color"
+      }
+      state("exec intagration test") {
+        sh """
+          cd iac-demo-cd && \
+          ansible-playbook \
+            -i hosts \
+            playbooks/integration-test.yaml
+        """
       }
     } catch (Exception e) {
       stage("recover test environment") {
