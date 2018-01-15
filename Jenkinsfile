@@ -158,7 +158,7 @@ node {
 
     // get deploy color for production environment
     get_color_cmd = 'cat /var/jenkins_home/for_cd/prod_deploy_color || exit 0'
-    def tmp = sh(script: get_color_cmd, returnStdout: true)
+    tmp = sh(script: get_color_cmd, returnStdout: true)
     def prod_deploy_color = "blue"
     def prod_origin_color = "green"
     if (tmp == "green") {
