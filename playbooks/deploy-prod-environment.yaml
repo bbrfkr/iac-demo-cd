@@ -1,0 +1,32 @@
+---
+- name: deploy production environment
+  hosts: "{{ target }}"
+  gather_facts: no
+  vars_files:
+  - vars/vars.yaml
+  tasks:
+  - block:
+    - name: get record sets
+      route53_facts:
+        hosted_zone_id: "{{ aws_hosted_zone_id }}"
+        query: record_sets
+      register: reg_record_sets
+    - name: set var for production ip
+      set_fact:
+        prod_ip: "{{ item.ResourceRecords.0.Value }}"
+      when: item.Name == "prod.bbrfkr.tk."
+      with_items: "{{ reg_record_sets.ResourceRecordSets }}"
+    - name: check instance id of production instance
+      ec2_instance_facts:
+        region: "{{ aws_region }}"
+        filters:
+          instance-state-name: running
+          "tag:Name": "bbrfkr-instance-prod-{{ ec2_tag_Color }}"
+      register: reg_prod_instance
+    - name: associate eip to production instance
+      ec2_eip:
+        region: "{{ aws_region }}"
+        device_id: "{{ reg_prod_instance.instances.0.instance_id }}"
+        public_ip: "{{ prod_ip }}"
+      when: reg_prod_instance.instances != []
+    delegate_to: localhost
