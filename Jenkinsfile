@@ -120,7 +120,7 @@ node {
             playbooks/deploy-test-environment.yaml
         """
       }
-      stage("exec intagration test") {
+      stage("exec integration test") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -149,6 +149,9 @@ node {
       }
       assert 0 == integration_test_result
     }
+
+    stage ("permit deploy production environment") {
+      input "本番環境にデプロイしてもよいですか？"
+    }
   }
 }
-
