@@ -5,6 +5,7 @@
   gather_facts: no
   vars_files:
   - vars/vars.yaml
+  - vars/app-vars.yaml
   tasks:
   - name: get content by curl
     shell: curl http://test.bbrfkr.tk
