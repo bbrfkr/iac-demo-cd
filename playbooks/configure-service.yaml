@@ -4,6 +4,7 @@
   remote_user: ec2-user
   vars_files:
   - vars/vars.yaml
+  - vars/app-vars.yaml
   tasks:
   - name: install httpd
     yum:

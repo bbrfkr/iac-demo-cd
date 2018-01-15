@@ -1,16 +1,63 @@
-version: 1.0
 aws_region: ap-northeast-1
 aws_keypair: bbrfkr-keypair-for-aws
 aws_ami_id: ami-6be57d0d
 aws_hosted_zone_id: ZMT06JP8KAKS7
+aws_subnets:
+- name: &subnet-iac bbrfkr-subnet-iac
+- name: &subnet-test bbrfkr-subnet-test
+- name: &subnet-prod bbrfkr-subnet-prod
+aws_groups:
+- name: &sg-ssh bbrfkr-sg-ssh
+- name: &sg-web bbrfkr-sg-web
+- name: &sg-jenkins bbrfkr-sg-jenkins
 aws_instances:
 - tags:
     Name: bbrfkr-instance-iac-test
     Env: iac
     Color: red
   instance_type: t2.micro
-  security_group: bbrfkr-sg-web
+  security_group: *sg-web
   state: present
-  vpc_subnet: bbrfkr-subnet-iac
+  vpc_subnet: *subnet-iac
+  az: ap-northeast-1c
+  assign_public_ip: yes
+- tags:
+    Name: bbrfkr-instance-test-blue
+    Env: test
+    Color: blue
+  instance_type: t2.micro
+  security_group: *sg-web
+  state: present
+  vpc_subnet: *subnet-test
+  az: ap-northeast-1c
+  assign_public_ip: yes
+- tags:
+    Name: bbrfkr-instance-test-green
+    Env: test
+    Color: green
+  instance_type: t2.micro
+  security_group: *sg-web
+  state: present
+  vpc_subnet: *subnet-test
+  az: ap-northeast-1c
+  assign_public_ip: yes
+- tags:
+    Name: bbrfkr-instance-prod-blue
+    Env: prod
+    Color: blue
+  instance_type: t2.micro
+  security_group: *sg-web
+  state: present
+  vpc_subnet: *subnet-prod
+  az: ap-northeast-1c
+  assign_public_ip: yes
+- tags:
+    Name: bbrfkr-instance-prod-green
+    Env: prod
+    Color: green
+  instance_type: t2.micro
+  security_group: *sg-web
+  state: present
+  vpc_subnet: *subnet-prod
   az: ap-northeast-1c
   assign_public_ip: yes

@@ -1,18 +1,19 @@
 ---
-- name: create instances
+- name: create target instance
   hosts: localhost
   connection: local
   gather_facts: false
   vars_files:
   - vars/vars.yaml
   tasks:
-  - name: check existence of instances
+  - name: check existence of instance
     ec2_instance_facts:
       region: "{{ aws_region }}"
       filters:
         instance-state-name: running
         "tag:Name": "{{ item.tags.Name }}"
     register: reg_ec2_facts
+    when: "{{ target }} == {{ item.tags.Name }}"
     with_items: "{{ aws_instances }}"
   - name: check subnet id
     ec2_vpc_subnet_facts:
@@ -20,9 +21,11 @@
       filters:
         "tag:Name": "{{ item.item.vpc_subnet }}"
     register: reg_subnet_id
-    when: item.instances | length == 0
+    when:
+    - item.instances is defined
+    - item.instances | length == 0
     with_items: "{{ reg_ec2_facts.results }}"
-  - name: create instances
+  - name: create instance
     ec2:
       region: "{{ aws_region }}"
       key_name: "{{ aws_keypair }}"
@@ -42,13 +45,17 @@
     register: reg_create_instances
     async: 3600
     poll: 0
-    when: item.item.instances | length == 0
+    when:
+    - item.item.instances is defined
+    - item.item.instances | length == 0
     with_items: "{{ reg_subnet_id.results }}"
-  - name: wait for instances creation to complete
+  - name: wait for instance creation to complete
     async_status:
       jid: "{{ item.ansible_job_id }}"
     register: ec2_jobs
     until: ec2_jobs.finished
     retries: 300
-    when: item.item.item.instances | length == 0
+    when:
+    - item.item.item.instances is defined
+    - item.item.item.instances | length == 0
     with_items: "{{ reg_create_instances.results }}"

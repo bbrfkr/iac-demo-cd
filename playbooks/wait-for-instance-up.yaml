@@ -1,6 +1,6 @@
 ---
-- name: wait for iac-test up
-  hosts: tag_Name_bbrfkr_instance_iac_test
+- name: wait for target instance up
+  hosts: "{{ target }}"
   gather_facts: false
   tasks:
   - name: wait for ssh port to be up

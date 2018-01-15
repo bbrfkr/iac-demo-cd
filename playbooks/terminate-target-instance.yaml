@@ -1,5 +1,5 @@
 ---
-- name: terminate all instances
+- name: terminate target instance
   hosts: localhost
   connection: local
   gather_facts: false
@@ -13,8 +13,9 @@
         instance-state-name: running
         "tag:Name": "{{ item.tags.Name }}"
     register: reg_ec2_facts
+    when: "{{ target }} == {{ item.tags.Name }}"
     with_items: "{{ aws_instances }}"
-  - name: terminate all managed instances
+  - name: terminate target instance
     ec2:
       region: "{{ aws_region }}"
       image: "dummy"
@@ -25,7 +26,9 @@
     register: reg_terminate_instances
     async: 3600
     poll: 0
-    when: item.instances | length != 0
+    when:
+    - item.instances is defined
+    - item.instances | length != 0
     with_items: "{{ reg_ec2_facts.results }}"
   - name: wait for instances termination to complete
     async_status:
@@ -33,5 +36,7 @@
     register: ec2_jobs
     until: ec2_jobs.finished
     retries: 300
-    when: item.item.instances | length != 0
+    when:
+    - item.item.instances is defined
+    - item.item.instances | length != 0
     with_items: "{{ reg_terminate_instances.results }}"
