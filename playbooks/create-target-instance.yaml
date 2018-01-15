@@ -13,7 +13,7 @@
         instance-state-name: running
         "tag:Name": "{{ item.tags.Name }}"
     register: reg_ec2_facts
-    when: "{{ target }} == {{ item.tags.Name }}"
+    when: "'{{ target }}' == '{{ item.tags.Name }}'"
     with_items: "{{ aws_instances }}"
   - name: check subnet id
     ec2_vpc_subnet_facts:
