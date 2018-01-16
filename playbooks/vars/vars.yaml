@@ -7,7 +7,7 @@ aws_subnets:
 - name: &subnet-test bbrfkr-subnet-test
 - name: &subnet-prod bbrfkr-subnet-prod
 aws_groups:
-- name: &sg-ssh bbrfkr-sg-ssh
+- name: &sg-workstaion bbrfkr-sg-workstation
 - name: &sg-web bbrfkr-sg-web
 - name: &sg-jenkins bbrfkr-sg-jenkins
 aws_instances:
