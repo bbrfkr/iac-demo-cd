@@ -60,17 +60,17 @@ node {
       assert 0 == unit_test_result
     }
 
-    stage("deploy test envirionment") {
-      get_color_cmd = 'cat /var/jenkins_home/for_cd/test_deploy_color || exit 0'
-      def tmp = sh(script: get_color_cmd, returnStdout: true)
-      def test_deploy_color = "blue"
-      def test_origin_color = "green"
-      if (tmp == "green") {
-        test_deploy_color = "green"
-        test_origin_color = "blue"
-      }
-  
-      try {
+    get_color_cmd = 'cat /var/jenkins_home/for_cd/test_deploy_color || exit 0'
+    def tmp = sh(script: get_color_cmd, returnStdout: true)
+    def test_deploy_color = "blue"
+    def test_origin_color = "green"
+    if (tmp == "green") {
+      test_deploy_color = "green"
+      test_origin_color = "blue"
+    }
+
+    try {
+      stage("configure test environment") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -101,6 +101,8 @@ node {
             --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
             playbooks/configure-service.yaml
         """
+      }
+      stage("deploy test environment and test one") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -108,16 +110,18 @@ node {
             -e 'target=tag_Name_bbrfkr_instance_test_$test_deploy_color' \
             playbooks/deploy-test-environment.yaml
         """
-
+  
         sleep(10)
-
+  
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
             -i hosts \
             playbooks/integration-test.yaml
         """
-      } catch (Exception e) {
+      }
+    } catch (Exception e) {
+      stage("recover test environment") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -125,32 +129,32 @@ node {
             -e 'target=tag_Name_bbrfkr_instance_test_$test_origin_color' \
             playbooks/deploy-test-environment.yaml
         """
-        integration_test_result = 1
       }
-      if (0 == integration_test_result) {
-        print "integration test is passed"
-        sh "echo -n $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color"
-      } else {
-        print "integration test is failed"
-      }
-      assert 0 == integration_test_result
+      integration_test_result = 1
     }
+    if (0 == integration_test_result) {
+      print "integration test is passed"
+      sh "echo -n $test_origin_color > /var/jenkins_home/for_cd/test_deploy_color"
+    } else {
+      print "integration test is failed"
+    }
+    assert 0 == integration_test_result
 
     stage ("permit deploy production environment") {
       input "単体テスト・結合テストをパスしました。本番環境にデプロイしてもよいですか？"
     }
 
-    stage("deploy production environment") {
-      get_color_cmd = 'cat /var/jenkins_home/for_cd/prod_deploy_color || exit 0'
-      tmp = sh(script: get_color_cmd, returnStdout: true)
-      def prod_deploy_color = "blue"
-      def prod_origin_color = "green"
-      if (tmp == "green") {
-        prod_deploy_color = "green"
-        prod_origin_color = "blue"
-      }
-  
-      try {
+    get_color_cmd = 'cat /var/jenkins_home/for_cd/prod_deploy_color || exit 0'
+    tmp = sh(script: get_color_cmd, returnStdout: true)
+    def prod_deploy_color = "blue"
+    def prod_origin_color = "green"
+    if (tmp == "green") {
+      prod_deploy_color = "green"
+      prod_origin_color = "blue"
+    }
+
+    try {
+      stage("configure production environment") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -181,6 +185,8 @@ node {
             --private-key=/var/jenkins_home/for_cd/bbrfkr-keypair-for-aws.pem \
             playbooks/configure-service.yaml
         """
+      }
+      stage("deploy production environment and test one") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -188,16 +194,18 @@ node {
             -e 'target=tag_Name_bbrfkr_instance_prod_$prod_deploy_color' \
             playbooks/deploy-prod-environment.yaml
         """
-
+  
         sleep(10)
-
+  
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
             -i hosts \
             playbooks/production-test.yaml
         """
-      } catch (Exception e) {
+      }
+    } catch (Exception e) {
+      stage("recover production environment") {
         sh """
           cd iac-demo-cd && \
           ansible-playbook \
@@ -205,15 +213,15 @@ node {
             -e 'target=tag_Name_bbrfkr_instance_prod_$prod_origin_color' \
             playbooks/deploy-prod-environment.yaml
         """
-        production_test_result = 1
       }
-      if (0 == production_test_result) {
-        print "production test is passed"
-        sh "echo -n $prod_origin_color > /var/jenkins_home/for_cd/prod_deploy_color"
-      } else {
-        print "production test is failed"
-      }
-      assert 0 == production_test_result
+      production_test_result = 1
     }
+    if (0 == production_test_result) {
+      print "production test is passed"
+      sh "echo -n $prod_origin_color > /var/jenkins_home/for_cd/prod_deploy_color"
+    } else {
+      print "production test is failed"
+    }
+    assert 0 == production_test_result
   }
 }
